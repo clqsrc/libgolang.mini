@@ -60,6 +60,7 @@ begin
 end;
 
 
+//这里响应 golang 的事件，并且允许从这里让 golang 来调用 delphi 的功能
 procedure func_on_event(const event:PAnsiChar; const key:PAnsiChar; const value:PAnsiChar); cdecl;
 begin
   //
