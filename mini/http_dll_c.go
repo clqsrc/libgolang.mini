@@ -14,6 +14,9 @@ package main;
 #ifndef _http_dll_
 #define _http_dll_
 
+
+//func_on_event 是一个函数指针，由调用 dll 的程序提供（甚至可以由 delphi7 这样的程序提供，一个主要作用是可以用来让 golang 调用 delphi 的功能）
+//注意这个指针是全局的，即是单实例的
 void (*func_on_event)(const char * event, const char * key, const char * value);
 
 //func_on_event = 0;  //奇怪，这个不行

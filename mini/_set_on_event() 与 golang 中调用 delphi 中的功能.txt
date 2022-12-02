@@ -1,0 +1,33 @@
+
+调用的方法略为复杂。步骤如下：
+
+1.
+delphi 或者其他宿主程序先定义一个事件函数指针，可以用来接收 golang 中的各个事件。
+也可以利用来让 golang 调用 delphi 等的功能。
+
+2.
+将这一函数的指针通过通用的 run_golang_json() 函数传递给 golang
+
+ps := run_golang_json(PAnsiChar('{"func_name":"set_on_event", "param1":"' + inttostr(Integer(@func_on_event)) + '"}'));
+
+3.
+golang 中最终将些指针设置为 func_on_event 对应的值。所以在回调事件前应当先设置这个函数指针。
+另外也要注意这个指针是全局的，即是单实例的。
+
+在 golang 内部的设置过程中依次调用的步骤为 
+GO_run_golang_json -> 
+GO_set_on_event ->
+C.set_on_event ->
+void set_on_event(long long func) ->
+void (*func_on_event)(const char * event, const char * key, const char * value);  ->
+
+4.
+之后 golang 中这样调用 delphi 等他宿主程序的功能。
+
+//设置成功后可以通知一下调用者 //我们可以看到其实可以通过这个接口让 golang 反过来调用调用者的接口功能
+    GO_on_event("event", "key", "value");  //test 2022.10
+    
+在 delphi7 的示例中，这直接调用到了函数
+procedure func_on_event(const event:PAnsiChar; const key:PAnsiChar; const value:PAnsiChar); cdecl;
+
+
